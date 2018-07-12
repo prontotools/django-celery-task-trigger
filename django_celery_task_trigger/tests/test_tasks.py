@@ -3,7 +3,7 @@ from unittest.mock import Mock, patch
 
 import requests
 
-from task_trigger.task_trigger import TaskTrigger
+from django_celery_task_trigger.task_trigger import TaskTrigger
 
 
 class TaskTriggerTest(TestCase):
@@ -143,4 +143,60 @@ class TaskTriggerTest(TestCase):
         mock_request.assert_called_with(
             url=f'{self.base_task_url}trigger-task/',
             json=expected_trigger_task_data
+        )
+
+    def test_toggle_periodic_task_with_enabled_true_should_request_with_correct_data(self):
+        survey_url = 'http://gateway:8000/survey/1234/'
+        company_account = 'http://gateway:8000/company/1000/'
+        with patch('requests.patch') as mock_request:
+            task_trigger = TaskTrigger(base_task_url=self.base_task_url)
+            task_trigger.toggle_periodic_task(
+                module_name='tests.tasks',
+                task_name='test_task',
+                enabled=True,
+                survey_url=survey_url,
+                company_account=company_account
+            )
+
+        expected_periodic_trigger_data = {
+            'module_name': 'tests.tasks',
+            'task_name': 'test_task',
+            'enabled': True,
+            'kwargs': {
+                'survey_url': survey_url,
+                'company_account': company_account
+            }
+        }
+
+        mock_request.assert_called_with(
+            url=f'{self.base_task_url}periodic-task/',
+            json=expected_periodic_trigger_data
+        )
+
+    def test_toggle_periodic_task_with_enabled_false_should_request_with_correct_data(self):
+        survey_url = 'http://gateway:8000/survey/1234/'
+        company_account = 'http://gateway:8000/company/1000/'
+        with patch('requests.patch') as mock_request:
+            task_trigger = TaskTrigger(base_task_url=self.base_task_url)
+            task_trigger.toggle_periodic_task(
+                module_name='tests.tasks',
+                task_name='test_task',
+                enabled=False,
+                survey_url=survey_url,
+                company_account=company_account
+            )
+
+        expected_periodic_trigger_data = {
+            'module_name': 'tests.tasks',
+            'task_name': 'test_task',
+            'enabled': False,
+            'kwargs': {
+                'survey_url': survey_url,
+                'company_account': company_account
+            }
+        }
+
+        mock_request.assert_called_with(
+            url=f'{self.base_task_url}periodic-task/',
+            json=expected_periodic_trigger_data
         )

@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(name='django-celery-task-trigger',
       description='Dynamic Task trigger for django-celery-task-broker ',
-      version='0.1.0',
+      version='0.4.0',
       url='https://github.com/lifez/django-celery-task-trigger',
       author='Prontotools',
       author_email='prontotools@prontomarketing.com',
