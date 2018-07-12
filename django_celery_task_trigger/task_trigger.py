@@ -55,6 +55,19 @@ class TaskTrigger:
         )
         return response.status_code
 
+    def toggle_periodic_task(self, module_name: str, task_name: str, enabled: bool, **kwargs):
+        periodic_trigger_data = {
+            'module_name': module_name,
+            'task_name': task_name,
+            'enabled': enabled,
+            'kwargs': kwargs
+        }
+        response = requests.patch(
+            url=f'{self.base_task_url}periodic-task/',
+            json=periodic_trigger_data
+        )
+        return response.status_code
+
     def trigger_task(self, module_name: str, task_name: str, **kwargs):
         trigger_data = {
             'module_name': module_name,
